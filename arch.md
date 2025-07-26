@@ -71,7 +71,7 @@
     - uses immediate: no
 - CMP:
     - opcode: 0x0A
-    - operation: `t0 = t0 cmp lz` ()
+    - operation: `t0 = t0 cmp lz` (1 if condition is true, 0 if condition is false)
     - uses immediate: yes (for condition)
 - PPC:
     - opcode: 0x0B
