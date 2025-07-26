@@ -43,28 +43,6 @@ typedef enum {
 	M_IN,
 } t0_mnemonic;
 
-typedef struct {
-	void* ptr;
-	size_t len;
-} fptr;
-
-fptr fptr_new(void* ptr, size_t len) {
-	fptr x;
-	x.ptr = ptr;
-	x.len = len;
-	return x;
-}
-
-uint8_t* fptr_read(fptr* fptr, size_t idx) {
-	if (idx < fptr->len) {
-		return fptr->ptr + idx;
-	} else {
-		return NULL;
-	}
-}
-
-fptr code;
-
 uint8_t ram[256];
 
 uint8_t t0 = 0;
@@ -86,19 +64,19 @@ int interpret(t0_instruction* ins) {
 	switch (ins->opcode) {
 		case M_CMP:
 			switch (ins->imm) {
-				case CONDITION_EQ:
+				case 0:
 					t0 = t0 == pop_stack();
 					break;
-				case CONDITION_GT:
+				case 1:
 					t0 = t0 > pop_stack();
 					break;
-				case CONDITION_GTE:
+				case 2:
 					t0 = t0 >= pop_stack();
 					break;
-				case CONDITION_LT:
+				case 3:
 					t0 = t0 < pop_stack();
 					break;
-				case CONDITION_LTE:
+				case 4:
 					t0 = t0 <= pop_stack();
 					break;
 				default:
@@ -186,18 +164,10 @@ int interpret(t0_instruction* ins) {
 	return E_NONE;
 }
 
-t0_instruction decode(uint16_t pc) {
-	uint8_t* opcode = fptr_read(&code, pc);
-	uint8_t* imm = fptr_read(&code, pc + 1);
-	if (opcode == NULL || imm == NULL) {
-		t0_instruction i;
-		i.imm = 0;
-		i.opcode = 0xFF;
-		return i;
-	}
+t0_instruction decode(uint8_t cd[2]) {
 	t0_instruction i;
-	i.opcode = *opcode;
-	i.imm = *imm;
+	i.opcode = cd[0];
+	i.imm = cd[1];
 	return i;
 }
 
@@ -205,7 +175,7 @@ int execution_loop(FILE* file) {
 	uint8_t cd[2];
 	while (fread(&cd, 2, 2, file) != 0) {
 		uint8_t pc_b = pc;
-		t0_instruction i = decode(pc);
+		t0_instruction i = decode(cd);
 		pc += 2;
 		int res = interpret(&i);
 		if (res != E_NONE) {
