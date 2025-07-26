@@ -10,6 +10,11 @@ static uint8_t CONDITION_LT  = 3;
 static uint8_t CONDITION_LTE = 4;
 
 static char* VERSION = "t0-v1";
+uint8_t ram[256];
+uint8_t t0 = 0;
+uint8_t sp = 0;
+uint16_t pc = 0;
+
 
 typedef struct {
 	uint8_t opcode;
@@ -42,12 +47,6 @@ typedef enum {
 	M_OUT,
 	M_IN,
 } t0_mnemonic;
-
-uint8_t ram[256];
-
-uint8_t t0 = 0;
-uint8_t sp = 0;
-uint16_t pc = 0;
 
 int push_stack(uint8_t b) {
 	ram[sp] = b;
@@ -194,7 +193,12 @@ int main(int argv, char** argc) {
 	char* file_name = NULL;
 	while (idx < argv) {
 		if (strcmp(argc[idx], "-h") == 0 || strcmp(argc[idx], "--help") == 0) {
-			printf("Help Needed\n");
+			printf("%s\n", VERSION);
+			printf("usage: t0 [FLAGS] <FILE>\n");
+			printf("[FLAGS]:\n");
+			printf(" -h/--help: prints this message\n");
+			printf(" -v/--version: prints version\n");
+			printf("<FILE>: specify binary file with t0 machine code\n");
 			return 0;
 		} else if (strcmp(argc[idx], "-v") == 0 || strcmp(argc[idx], "--version") == 0) {
 			printf("%s\n", VERSION);
