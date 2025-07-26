@@ -86,19 +86,19 @@ int interpret(t0_instruction* ins) {
 	switch (ins->opcode) {
 		case M_CMP:
 			switch (ins->imm) {
-				case 0: // eq
+				case CONDITION_EQ:
 					t0 = t0 == pop_stack();
 					break;
-				case 1: // gt
+				case CONDITION_GT:
 					t0 = t0 > pop_stack();
 					break;
-				case 2: // gte
+				case CONDITION_GTE:
 					t0 = t0 >= pop_stack();
 					break;
-				case 3: // lt
+				case CONDITION_LT:
 					t0 = t0 < pop_stack();
 					break;
-				case 4: // lte
+				case CONDITION_LTE:
 					t0 = t0 <= pop_stack();
 					break;
 				default:
