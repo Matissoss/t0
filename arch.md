@@ -83,7 +83,7 @@
     - uses immediate: no
 - JMP:
     - opcode: 0x0D
-    - operation: `pc = stack[sp] + stack[sp - 1] << 8`; pops stack twice
+    - operation: `pc = stack[sp] + stack[sp + 1] << 8`; pops stack twice
     - uses immediate: yes (for jump condition)
 - ST:
     - opcode: 0x0E
