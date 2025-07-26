@@ -8,4 +8,4 @@
 
 ## credits
 
-made by matissoss \<matissossgamedev@proton.me> under MIT license.
+made by matissoss \<matissossgamedev@proton.me> under 3-Clause BSD license.
