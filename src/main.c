@@ -25,6 +25,7 @@ typedef enum {
 	E_NONE,
 	E_UNDEFINED,
 	E_STACK,
+ E_EXIT
 } t0_error;
 
 typedef enum {
@@ -48,6 +49,9 @@ typedef enum {
 	M_IN,
 } t0_mnemonic;
 
+uint8_t last_on_stack() {
+    return ram[sp];
+}
 int push_stack(uint8_t b) {
 	ram[sp] = b;
 	sp += 1;
@@ -64,19 +68,19 @@ int interpret(t0_instruction* ins) {
 		case M_CMP:
 			switch (ins->imm) {
 				case 0:
-					t0 = t0 == pop_stack();
+					t0 = t0 == last_on_stack();
 					break;
 				case 1:
-					t0 = t0 > pop_stack();
+					t0 = t0 > last_on_stack();
 					break;
 				case 2:
-					t0 = t0 >= pop_stack();
+					t0 = t0 >= last_on_stack();
 					break;
 				case 3:
-					t0 = t0 < pop_stack();
+					t0 = t0 < last_on_stack();
 					break;
 				case 4:
-					t0 = t0 <= pop_stack();
+					t0 = t0 <= last_on_stack();
 					break;
 				default:
 					return E_UNDEFINED;
@@ -177,12 +181,10 @@ int execution_loop(FILE* file) {
 		t0_instruction i = decode(cd);
 		pc += 2;
 		int res = interpret(&i);
-		if (res != E_NONE) {
-			return res;
-		}
-		// jump occured
-		if (pc_b != pc) {
-			fseek(file, pc, 0);
+		 if (res != E_NONE) {
+			 return res;
+   }
+		 fseek(file, pc, 0);
 		}
 	}
 	return E_NONE;
@@ -225,6 +227,8 @@ int main(int argv, char** argc) {
 	int x = execution_loop(file);
 	fclose(file);
 	switch (x) {
+  case E_EXIT:
+   return 0;
 		case E_UNDEFINED:
 			return 1;
 		case E_STACK:
