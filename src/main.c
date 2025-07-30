@@ -147,19 +147,19 @@ int interpret(t0_instruction* ins) {
 			t0 != t0;
 			break;
 		case M_OR:
-			t0 |= ram[sp];
+			t0 |= last_on_stack();
 			break;
 		case M_AND:
-			t0 &= ram[sp];
+			t0 &= last_on_stack();
 			break;
 		case M_XOR:
-			t0 ^= ram[sp];
+			t0 ^= last_on_stack();
 			break;
 		case M_SUB:
-			t0 -= ram[sp];
+			t0 -= last_on_stack();
 			break;
 		case M_ADD:
-			t0 += ram[sp];
+			t0 += last_on_stack();
 			break;
 		default:
 			return E_UNDEFINED;
@@ -181,20 +181,18 @@ int execution_loop(FILE* file) {
 		t0_instruction i = decode(cd);
 		pc += 2;
 		int res = interpret(&i);
-		 if (res != E_NONE) {
-			 return res;
-   }
-		 fseek(file, pc, 0);
-		}
+		if (res != E_NONE) {
+			return res;
+   		}
+		fseek(file, pc, 0);
 	}
 	return E_NONE;
 }
 
-int main(int argv, char** argc) {
-	int idx = 1;
+int main(int argc, char** argv) {
 	char* file_name = NULL;
-	while (idx < argv) {
-		if (strcmp(argc[idx], "-h") == 0 || strcmp(argc[idx], "--help") == 0) {
+	for (int idx = 1; idx < argc; idx++) {
+		if (strcmp(argv[idx], "-h") == 0 || strcmp(argv[idx], "--help") == 0) {
 			printf("%s\n", VERSION);
 			printf("usage: t0 [FLAGS] <FILE>\n");
 			printf("[FLAGS]:\n");
@@ -202,19 +200,19 @@ int main(int argv, char** argc) {
 			printf(" -v/--version: prints version\n");
 			printf("<FILE>: specify binary file with t0 machine code\n");
 			return 0;
-		} else if (strcmp(argc[idx], "-v") == 0 || strcmp(argc[idx], "--version") == 0) {
+		} else if (strcmp(argv[idx], "-v") == 0 || strcmp(argv[idx], "--version") == 0) {
 			printf("%s\n", VERSION);
 			return 0;
 		} else {
 			if (file_name == NULL) {
-				file_name = argc[idx];
+				file_name = argv[idx];
 			} else {
-				printf("error: unknown argument/flag: %s!\n", argc[idx]);
+				printf("error: unknown argument/flag: %s!\n", argv[idx]);
 				return 1;
 			}
 		}
 		if (file_name == NULL) {
-			file_name = argc[idx];
+			file_name = argv[idx];
 		}
 		idx += 1;
 	}
@@ -227,8 +225,8 @@ int main(int argv, char** argc) {
 	int x = execution_loop(file);
 	fclose(file);
 	switch (x) {
-  case E_EXIT:
-   return 0;
+  		case E_EXIT:
+		   return 0;
 		case E_UNDEFINED:
 			return 1;
 		case E_STACK:
