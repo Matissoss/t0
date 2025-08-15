@@ -101,18 +101,18 @@ int t0_interpret(uint8_t instruction) {
 					break;
 				case 0b00010000:
 					if (t0 == 1) {
-						pc = ram[sp] | ram[sp + 1] << 8;
+						pc = ram[sp] << 8 | ram[sp + 1];
 						sp += 2;
 					}
 					break;
 				case 0b00100000:
 					if (t0 == 0) {
-						pc = ram[sp] | ram[sp + 1] << 8;
+						pc = ram[sp] << 8 | ram[sp + 1];
 						sp += 2;
 					}
 					break;
 				case 0b00110000:
-					pc = ram[sp] | ram[sp + 1] << 8;
+					pc = ram[sp] << 8 | ram[sp + 1];
 					sp += 2;
 					break;
 				default: return E_UD;
