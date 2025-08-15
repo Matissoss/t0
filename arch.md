@@ -38,7 +38,7 @@
     - immediate: 1
 - `XOR`:
     - opcode: 0x0
-    - operation: `t0 |= t1`
+    - operation: `t0 ^= t1`
     - immediate: 2
 - `NOT`:
     - opcode: 0x0
@@ -58,7 +58,7 @@
     - immediate: 6
 - `DECS` (Decrement `sp`):
     - opcode: 0x0
-    - operation: `sp += 1`
+    - operation: `sp -= 1`
     - immediate: 7
 - `INC`:
     - opcode: 0x0
@@ -81,7 +81,7 @@
     - immediate: 1
 - `PPC`:
     - opcode: 0x1
-    - operation: `sp -= 2; push (pc & (0xFF << 8)) >> 8; push pc & 0xFF`
+    - operation: `ram[sp] = pc & 0xFF; ram[sp - 1] = (pc & 0xFF00) >> 8; sp -= 2;`
     - immediate: 2
 - `LSP`:
     - opcode: 0x1
@@ -111,11 +111,11 @@
 
 - `S1LO` (Set LO bits):
     - opcode: 0x4
-    - operation: `t1 |= imm`
+    - operation: `t1 = t1 & 0xF0; t1 |= imm`
     - immediate: varies
 - `S1HI` (Set HI bits):
     - opcode: 0x5
-    - operation: `t1 |= (imm) << 4`
+    - operation: `t1 = t1 & 0x0F; t1 |= imm << 4`
     - immediate: varies
 
 ### condition instructions
@@ -126,7 +126,7 @@
     - immediate: condition code 
 - `JMP`:
     - opcode: 0x6
-    - operation: `pc = ram[sp] | ram[sp + 1] << 4; sp += 2`
+    - operation: `pc = ram[sp] << 8 | ram[sp + 1]; sp += 2`
     - immediate: jump condition code << 4
 
 ### misc instructions
