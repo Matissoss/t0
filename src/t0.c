@@ -148,7 +148,7 @@ int t0_interpret(uint8_t instruction) {
 int t0_exec(FILE* file) {
 	uint8_t buf;
 	uint8_t tmp_pc;
-	while (fread(&buf, 1, 2, file) != 0) {
+	while (fread(&buf, 1, 1, file) != 0) {
 		tmp_pc = pc;
 		int ecode = t0_interpret(buf);
 		if (ecode != E_OK)
